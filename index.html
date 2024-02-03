@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Игра: выбор контейнера для мусора</title>
+<style>
+  body {
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    margin-top: 20px;
+  }
+  #container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  .trash-bin {
+    margin: 5px;
+    cursor: pointer;
+    max-width: 80px; /* Уменьшаем максимальную ширину изображений контейнеров */
+  }
+  #trash {
+    max-width: 30%; /* Уменьшаем максимальную ширину изображения мусора */
+    height: auto; /* Автоматически подстраиваем высоту */
+  }
+</style>
+</head>
+<body>
+<h1>Выберите контейнер для мусора</h1>
+<p id="levelInfo"></p>
+<img id="trash" src="" alt="Мусор">
+<div id="container">
+  <img class="trash-bin" src="https://telegra.ph/file/11672d609f56d1eb6eaeb.png" alt="Для металла" onclick="checkTrash('metal')">
+  <img class="trash-bin" src="https://telegra.ph/file/689a7695695c700637ae5.png" alt="Для бумаги" onclick="checkTrash('paper')">
+  <img class="trash-bin" src="https://telegra.ph/file/25c06a10d2c97eb5d2759.png" alt="Для пластмассы" onclick="checkTrash('plastic')">
+  <img class="trash-bin" src="https://telegra.ph/file/2573e51a02fc1ea3669cd.png" alt="Для пищевых отходов" onclick="checkTrash('food')">
+</div>
+
+<script>
+var trashTypes = ['metal', 'paper', 'plastic', 'food'];
+var trashImages = {
+    'metal': ['https://telegra.ph/file/071239354c8d248c9cb93.png', 'https://telegra.ph/file/52237e4a0eb9d96a43036.png', 'https://telegra.ph/file/86dff1d6a2ed3fbed08a4.png'],
+    'paper': ['https://telegra.ph/file/445c1c8e9eac254106ee7.png', 'https://telegra.ph/file/69efdba0913e279b088b7.png', 'https://telegra.ph/file/784cbfe5ad91402982124.png', 'https://telegra.ph/file/95b152497010e505b2265.png' , 'https://telegra.ph/file/f826be310c71317753d78.png' , 'https://telegra.ph/file/c30c07e6136ed933128ea.png'],
+    'plastic': ['https://telegra.ph/file/4b830daf672f7bc90e14a.png', 'https://telegra.ph/file/9e1a2946982d382cf7ca8.png', 'https://telegra.ph/file/97c880a38d11bc716d807.png', 'https://telegra.ph/file/0aa106ea359f1daf97a30.png' , 'https://telegra.ph/file/501874e62d4f176b05a36.png' , 'https://telegra.ph/file/9a2ec832390107cfdc93f.png' , 'https://telegra.ph/file/f32dd9b1da715c2fa1935.png'],
+    'food': ['https://telegra.ph/file/a81ef9f22505eb4cf9d0b.png', 'https://telegra.ph/file/dd75c995f25f91f38824f.png', 'https://telegra.ph/file/839357226a86683781054.png', 'https://telegra.ph/file/502b2938143db0153fcdb.png', 'https://telegra.ph/file/07b747de936fdb46dba38.png', 'https://telegra.ph/file/5054eaff7f22ef7140848.png', 'https://telegra.ph/file/7f115338f247197d26ebf.png', 'https://telegra.ph/file/646a5c27b3b8f35be1789.png']
+ };
+
+var currentTrashType;
+var currentTrashImage;
+var sortedTrash = 0;
+var currentLevel = 1;
+var trashPerLevel = 5;
+
+// Проверяем, есть ли сохраненный прогресс игры в localStorage
+if(localStorage.getItem('currentLevel')) {
+  currentLevel = parseInt(localStorage.getItem('currentLevel'));
+  sortedTrash = parseInt(localStorage.getItem('sortedTrash'));
+}
+
+function startLevel() {
+  updateLevelInfo();
+  nextTrash();
+}
+
+function updateLevelInfo() {
+  document.getElementById('levelInfo').innerText = "Отсортировано " + sortedTrash + " из " + (currentLevel * trashPerLevel) + " мусора. Уровень " + currentLevel;
+}
+
+function nextTrash() {
+  currentTrashType = trashTypes[Math.floor(Math.random() * trashTypes.length)];
+  currentTrashImage = trashImages[currentTrashType][Math.floor(Math.random() * trashImages[currentTrashType].length)];
+  document.getElementById('trash').src = currentTrashImage;
+}
+
+function checkTrash(binType) {
+  if (binType === currentTrashType) {
+    sortedTrash++;
+    if (sortedTrash === currentLevel * trashPerLevel) {
+      alert('Молодец, уровень пройден!');
+      currentLevel++;
+      localStorage.setItem('currentLevel', currentLevel); // Сохраняем текущий уровень
+      sortedTrash = 0; // Сбрасываем счетчик отсортированного мусора
+      localStorage.setItem('sortedTrash', sortedTrash); // Сохраняем счетчик отсортированного мусора
+      startLevel();
+    } else {
+      nextTrash();
+      updateLevelInfo();
+    }
+  } else {
+    alert('Выберите другой контейнер!');
+  }
+}
+
+// Запуск игры с текущего уровня
+startLevel();
+</script>
+</body>
+</html>
